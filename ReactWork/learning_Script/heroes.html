@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+
+  <title>Our superheroes</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Faster+One" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header>
+
+  </header>
+
+  <section>
+
+  </section>
+
+  <script>
+    //Request, fetch 를 이용해서 json 요청을 하는 함수 정의하기
+    //이때 반드시 비동기 통신으로 해야하기 때문에 async 를 이용해서 요청한다.
+    async function pending() {
+      //requestURL //json 파일 url
+      const reqURL = "https://mdn.github.io/learning-area/javascript/oojs/json/superheroes.json";
+
+      //Request 객체를 이용, 요청 준비 작업
+      const request = new Request(reqURL);
+      //연결 준비 완료
+
+      //요청을 보내고 응답(데이터)을 받기
+      const response = await fetch(request);
+
+      //superheroes 에 json 파일 담기
+      const superheroes = await response.json();
+
+      console.log(superheroes);
+
+      //superheroes 의 공통 정보는 Header 에 정의하고
+      //각 개별 정보는 카드 형식으로 정의한다.
+      //따라서 showHeader(), showHero() 를 정의 후, 받아 낸 json 을 파라미터로 넘긴다.
+      showHeader(superheroes);
+      showHero(superheroes);
+    }
+
+    function showHeader(obj) {
+      //1. header element 를 찾아서 객체화 하기
+      const header = document.querySelector("header");
+      //<h1> 크기로 superheroes 의 title 넣기
+      //<h1> element 생성 후 <header> 하위에 추가한다.
+      //방법 1
+      const myH1 = document.createElement("h1");
+      myH1.textContent = obj.squadName;
+
+      //자식요소 추가는 부모 요소에서
+      header.appendChild(myH1);
+
+      //방법 2 //구조분해할당
+      //const{squadName}
+
+      //myH1 하위에 <p> element 를 생성해서 배치
+      const myP = document.createElement("p");
+      //백틱문법 사용
+      myP.textContent = `HomeTown: ${obj.homeTown} // 조직일자 : ${obj.formed}`;
+      header.appendChild(myP);
+
+    }
+
+    function showHero(obj) {
+      //Section 영역에 각 영웅의 정보를 rendering 시킨다.
+      const section = document.querySelector('section');
+
+      //영웅들을 parsing 해서 가져오기
+      const heroes = obj.members;
+
+      console.log(heroes);
+
+      for(const hero of heroes) {
+        console.log('히어로', hero);
+        //hero 는 배열 내의 각 영웅 객체이다.
+        //위 코드에서 자동으로 리턴해주니 해당 정보를 추출해서 랜더링하면 된다.
+
+        //<section> 에 <article> node 생성
+        const myArticle = document.createElement('article');
+
+        //영웅들의 이름은 <h2>
+        const myH2 = document.createElement('h2');
+
+        //일반 정보는 <p>
+        const param1 = document.createElement('p');
+        const param2 = document.createElement('p');
+        const param3 = document.createElement('p');
+
+        //영웅의 고유 능력치는 List 형태로(ul)
+        const myList = document.createElement('ul');
+
+        //일반정보 node 에 값 대입
+        myH2.textContent = hero.name;
+        param1.textContent = `코드네임 : ${hero.secretIdentity}`;
+        param2.textContent = `Age : ${hero.age}`;
+        param3.textContent = `SuperPowers : `;
+
+        //SuperPowers 는 배열에 담겨 있으니 다시 꺼내오기
+        const superPowers = hero.powers;
+        for (const power of superPowers) {
+          console.log('능력', power);
+          //각 능력은 <ul> 하위의 <li>로 출력
+          const listItem = document.createElement('li');
+
+          listItem.textContent = power;
+
+          myList.appendChild(listItem);
+
+        }
+
+        //artice node 에 모두 추가
+        myArticle.appendChild(myH2);
+        myArticle.appendChild(param1);
+        myArticle.appendChild(param2);
+        myArticle.appendChild(param3);
+        myArticle.appendChild(myList);
+
+        //section node 에 article 추가
+        section.appendChild(myArticle);
+
+      }
+    }
+    
+    pending();
+
+
+  </script>
+</body>
+
+</html>
